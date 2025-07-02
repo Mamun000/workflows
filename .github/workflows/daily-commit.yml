@@ -35,11 +35,14 @@ jobs:
           echo 1 > counter.txt
         fi
         
-    - name: Auto Commit
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: 'Daily automated update - $(date +%Y-%m-%d)'
-        commit_options: '--no-verify --signoff'
-        commit_user_name: github-actions[bot]
-        commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
-        commit_author: GitHub Actions <actions@github.com>
+    - name: Commit changes
+      run: |
+       git add .
+       if git diff --staged --quiet; then
+       echo "No changes to commit, creating empty commit"
+         git commit --allow-empty -m "Daily update: $(date -I) [automated]"
+       else
+         git commit -m "Daily update: $(date -I) [automated]"
+       fi
+       git pull --rebase origin main
+       git push origin main
