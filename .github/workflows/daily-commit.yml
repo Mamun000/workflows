@@ -1,11 +1,10 @@
-# .github/workflows/daily-commit.yml
 name: Daily Commit
 
 on:
   schedule:
     - cron: '0 12 * * *'  # Runs at 12:00 UTC every day
   workflow_dispatch: # Allows manual trigger
-  
+
 permissions:
   contents: write
 
@@ -13,41 +12,41 @@ jobs:
   commit:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        fetch-depth: 0
-        
-    - name: Generate content
-      run: |
-        # Create or update a log file with current date
-        echo "$(date): Automated update" >> activity_log.txt
-        
-        # Create a simple data file
-        echo "{\"date\": \"$(date -I)\", \"timestamp\": $(date +%s), \"message\": \"Daily automated commit\"}" > daily_data.json
-        
-        # Update a counter
-        if [ -f counter.txt ]; then
-          count=$(cat counter.txt)
-          echo $((count + 1)) > counter.txt
-        else
-          echo 1 > counter.txt
-        fi
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-    - name: Set Git user
-      run: |
-         git config user.name "github-actions[bot]"
-         git config user.email "github-actions[bot]@users.noreply.github.com"
-        
-    - name: Commit changes
-      run: |
-       git add .
-       if git diff --staged --quiet; then
-       echo "No changes to commit, creating empty commit"
-         git commit --allow-empty -m "Daily update: $(date -I) [automated]"
-       else
-         git commit -m "Daily update: $(date -I) [automated]"
-       fi
-       git pull --rebase origin main   # <-- Add this line before push
-       git push origin main
+      - name: Generate content
+        run: |
+          # Create or update a log file with current date
+          echo "$(date): Automated update" >> activity_log.txt
+
+          # Create a simple data file
+          echo "{\"date\": \"$(date -I)\", \"timestamp\": $(date +%s), \"message\": \"Daily automated commit\"}" > daily_data.json
+
+          # Update a counter
+          if [ -f counter.txt ]; then
+            count=$(cat counter.txt)
+            echo $((count + 1)) > counter.txt
+          else
+            echo 1 > counter.txt
+          fi
+
+      - name: Set Git user
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+
+      - name: Commit changes
+        run: |
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit, creating empty commit"
+            git commit --allow-empty -m "Daily update: $(date -I) [automated]"
+          else
+            git commit -m "Daily update: $(date -I) [automated]"
+          fi
+          git pull --rebase origin main
+          git push origin main
