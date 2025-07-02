@@ -44,5 +44,5 @@ jobs:
        else
          git commit -m "Daily update: $(date -I) [automated]"
        fi
-       git pull --rebase origin main
+       git pull --rebase origin main   # <-- Add this line before push
        git push origin main
