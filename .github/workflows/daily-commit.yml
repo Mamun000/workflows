@@ -36,21 +36,20 @@ jobs:
             echo 1 > counter.txt
           fi
 
-      - name: Set up Git user
+      # ... previous steps
+      - name: Set up Git identity
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+         git config --global user.name "github-actions[bot]"
+         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit and push changes
+      - name: Commit changes
         run: |
-          git add .
-          if git diff --staged --quiet; then
-            echo "No changes to commit, creating empty commit"
-            git commit --allow-empty -m "Daily update: $(date -I) [automated]"
-          else
-            git commit -m "Daily update: $(date -I) [automated]"
-          fi
-          
-          # Handle potential conflicts with retry logic
-          git pull --rebase origin main || true
-          git push origin main || (git pull --rebase origin main && git push origin main)
+         git add .
+         if git diff --staged --quiet; then
+          echo "No changes to commit, creating empty commit"
+          git commit --allow-empty -m "Daily update: $(date -I) [automated]"
+         else
+           git commit -m "Daily update: $(date -I) [automated]"
+         fi
+         git pull --rebase origin main
+         git push origin main
