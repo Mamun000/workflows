@@ -18,13 +18,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Set up Git user
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      - name: Commit changes
-        run: |
-          git add .
+      
+      
       - name: Generate content
         run: |
           # Create or update a log file with current date
@@ -40,6 +35,11 @@ jobs:
           else
             echo 1 > counter.txt
           fi
+
+      - name: Set up Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit and push changes
         run: |
