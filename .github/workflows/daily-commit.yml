@@ -3,7 +3,7 @@ name: Daily Commit
 on:
   schedule:
     - cron: '0 12 * * *'  # Runs at 12:00 UTC every day
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual trigger
 
 permissions:
   contents: write
@@ -20,13 +20,18 @@ jobs:
 
       - name: Set Git user
         run: |
-          git config user.name "Mamun"
-          git config user.email "skmamunislam786@gmail.com"
+          git config --local user.name "Mamun"
+          git config --local user.email "skmamunislam786@gmail.com"
 
       - name: Generate content
         run: |
+          # Create or update a log file with current date
           echo "$(date): Automated update" >> activity_log.txt
+          
+          # Create a simple data file
           echo "{\"date\": \"$(date -I)\", \"timestamp\": $(date +%s), \"message\": \"Daily automated commit\"}" > daily_data.json
+          
+          # Update a counter
           if [ -f counter.txt ]; then
             count=$(cat counter.txt)
             echo $((count + 1)) > counter.txt
@@ -34,7 +39,7 @@ jobs:
             echo 1 > counter.txt
           fi
 
-      - name: Commit changes
+      - name: Commit and push changes
         run: |
           git add .
           if git diff --staged --quiet; then
@@ -43,5 +48,7 @@ jobs:
           else
             git commit -m "Daily update: $(date -I) [automated]"
           fi
-          git pull --rebase origin main
-          git push origin main
+          
+          # Handle potential conflicts with retry logic
+          git pull --rebase origin main || true
+          git push origin main || (git pull --rebase origin main && git push origin main)
