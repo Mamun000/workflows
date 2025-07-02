@@ -3,7 +3,7 @@ name: Daily Commit
 on:
   schedule:
     - cron: '0 12 * * *'  # Runs at 12:00 UTC every day
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -18,26 +18,21 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
+      - name: Set Git user
+        run: |
+          git config user.name "Mamun"
+          git config user.email "skmamunislam786@gmail.com"
+
       - name: Generate content
         run: |
-          # Create or update a log file with current date
           echo "$(date): Automated update" >> activity_log.txt
-
-          # Create a simple data file
           echo "{\"date\": \"$(date -I)\", \"timestamp\": $(date +%s), \"message\": \"Daily automated commit\"}" > daily_data.json
-
-          # Update a counter
           if [ -f counter.txt ]; then
             count=$(cat counter.txt)
             echo $((count + 1)) > counter.txt
           else
             echo 1 > counter.txt
           fi
-
-      - name: Set Git user
-        run: |
-          git config --global user.name "Mamun"
-          git config --global user.email "skmamunislam786@gmail.com"
 
       - name: Commit changes
         run: |
