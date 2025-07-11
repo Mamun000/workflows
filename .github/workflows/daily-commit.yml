@@ -46,8 +46,8 @@ jobs:
       # ... previous steps
       - name: Set up Git identity
         run: |
-         git config user.name "github-actions[bot]"
-         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+         git config user.name "Mamun"
+         git config user.email "skmamunislam786@gmail.com"
 
       - name: Commit changes
         run: |
